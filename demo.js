@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 /**
  * useState
@@ -63,7 +63,7 @@ import React, { useState, useEffect } from 'react';
 //         )
 //     }
 // }
-// // 使用高阶组件`logTimeHOC`包裹下 
+// // 使用高阶组件`logTimeHOC`包裹下
 // export default logTimeHOC(InnerLogComponent,{log:true})
 // class InnerSetTimeComponent extends React.Component{
 //     render(){
@@ -75,7 +75,7 @@ import React, { useState, useEffect } from 'react';
 //         )
 //     }
 // }
-// // 使用高阶组件`logTimeHOC`包裹下 
+// // 使用高阶组件`logTimeHOC`包裹下
 // export default logTimeHOC(InnerSetTimeComponent,{time:true})
 // class InnerLogTimeShowComponent extends React.Component{
 //     render(){
@@ -86,9 +86,8 @@ import React, { useState, useEffect } from 'react';
 //         )
 //     }
 // }
-// // 使用高阶组件`logTimeHOC`包裹下 
+// // 使用高阶组件`logTimeHOC`包裹下
 // export default logTimeHOC(InnerLogTimeShowComponent)
-
 
 // function useLogTime(data = { log: true, time: true }) {
 //     const [count, setCount] = useState(0);
@@ -120,13 +119,15 @@ import React, { useState, useEffect } from 'react';
  * useState  useEffect demo
  */
 function App() {
-    var [count, setCount] = useState(0);
-    useEffect(() => {
-        console.log(`update--${count}`)
-    }, [count])
-    return <div>
-        <button onClick={() => setCount(count + 1)}>Click</button>
+  var [count, setCount] = useState(0);
+  useEffect(() => {
+    console.log(`update--${count}`);
+  }, [count]);
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Click</button>
     </div>
+  );
 }
 // export default App;
 /**
@@ -135,31 +136,28 @@ function App() {
 
 var val;
 function useState(initVal) {
-    val = val || initVal;
-    function setVal(newVal) {
-        val = newVal;
-        render();
-    }
-    return [val, setVal];
+  val = val || initVal;
+  function setVal(newVal) {
+    val = newVal;
+    render();
+  }
+  return [val, setVal];
 }
 
 function render() {
-    ReactDOM.render(
-        <App />,
-        document.getElementById("root")
-    );
+  ReactDOM.render(<App />, document.getElementById("root"));
 }
 /**
  * useEffect实现原理
  */
 var watchArr;
 function useEffect(fn, watch) {
-    const hasWatchChange = true;
-    hasWatchChange = watchArr && watch.every((val, i) => val === watchArr[i])
-    if (hasWatchChange) {
-        fn();
-        watchArr = watch;
-    }
+  const hasWatchChange = true;
+  hasWatchChange = watchArr && watch.every((val, i) => val === watchArr[i]);
+  if (hasWatchChange) {
+    fn();
+    watchArr = watch;
+  }
 }
 
 /**
@@ -169,44 +167,138 @@ function useEffect(fn, watch) {
 let state = [];
 let currentIndex = 0;
 function useState(initVal) {
-    state[currentIndex] = state[currentIndex] || initVal;
-    function setVal(newVal) {
-        state[currentIndex] = newVal;
-        render();
-    }
-    return [state[currentIndex++], setVal];
+  state[currentIndex] = state[currentIndex] || initVal;
+  function setVal(newVal) {
+    state[currentIndex] = newVal;
+    render();
+  }
+  return [state[currentIndex++], setVal];
 }
 function useEffect(fn, watch) {
-    const hasWatchChange = state[currentIndex] ? watch.every((val, i) => val === state[currentIndex][i]) : true;
-    if (hasWatchChange) {
-        state[currentIndex] = watch;
-        currentIndex++;
-        fn();
-    }
+  const hasWatchChange = state[currentIndex]
+    ? watch.every((val, i) => val === state[currentIndex][i])
+    : true;
+  if (hasWatchChange) {
+    state[currentIndex] = watch;
+    currentIndex++;
+    fn();
+  }
 }
 /**
  * 实现周期函数
  */
 
 function App() {
-    let [count, setCount] = setState(0);
+  let [count, setCount] = setState(0);
 
-    useEffect(() => {
-        return function () {
-            //componentWillUnmount
-        }
+  useEffect(
+    () => {
+      return function() {
+        //componentWillUnmount
+      };
     },
-        []//componentDidMount //componetnDidUpdate []改变
-    )
-    return <div>
+    [] //componentDidMount //componetnDidUpdate []改变
+  );
+  return <div></div>;
+}
 
-    </div>
+/**
+ * fetch请求
+ */
+
+function App() {
+  let [data, setData] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios(config);
+      setData(result);
+    };
+
+    fetchData();
+  }, []);
+
+  return <div></div>;
 }
 
 /**
  * 请求接口分离
  */
 
- function useFetchHook(params) {
-     
- }
+function useFetchHook(config, watch) {
+  let [data, setData] = useState(null);
+  let [status, setStatus] = useState(0);
+  useEffect(
+    () => {
+      const fetchData = async () => {
+        try {
+          const result = await axios(config);
+          setData(result);
+          setStatus(0);
+        } catch (e) {
+          setStatus(1);
+        }
+        fetchData();
+      };
+    },
+    watch ? [...watch] : []
+  );
+
+  return { data, status };
+}
+
+//react hook  讲解
+/**
+ * 传统组件两种封装方式 函数式  类模式
+ */
+
+/**
+ * 函数式
+ */
+
+function App(props) {
+  return <div>{`hello! ${props.name}`}</div>;
+}
+
+function renderApp() {
+  let appProps = { name: "dqhan" };
+  ReactDOM.render(<App {...appProps} />, document.getElementById("app"));
+}
+
+/**
+ * 类形式
+ */
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: props.name
+    };
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        <div> {`hello~${this.props.name}`} </div>
+        <div> {`hello~${this.state.name}`} </div>
+      </React.Fragment>
+    );
+  }
+}
+
+function renderApp() {
+  let appProps = { name: "dqhan" };
+  ReactDOM.render(<App {...appProps} />, document.getElementById("app"));
+}
+
+//函数式组件没有状态管理，比较单纯的通过props传递属性，可以理解成是一个无状态组件
+//类组件，有状态控制，但是会出现地狱嵌套问题，层级过深
+
+/**
+ * react hook
+ */
+function App() {
+  let [name, setName] = setState('dqhan');
+
+  return <div>{`hello~${name}`}</div>;
+}
