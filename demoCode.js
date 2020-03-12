@@ -193,7 +193,7 @@ function App() {
 
   useEffect(
     () => {
-      return function() {
+      return function () {
         //componentWillUnmount
       };
     },
@@ -252,38 +252,67 @@ function useFetchHook(config, watch) {
  */
 
 /**
- * 函数式
- */
-
-function App(props) {
-  return <div>{`hello! ${props.name}`}</div>;
-}
-
-function renderApp() {
-  let appProps = { name: "dqhan" };
-  ReactDOM.render(<App {...appProps} />, document.getElementById("app"));
-}
-
-/**
  * 类形式
  */
 
+//无状态组件
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return <div>
+      <p>{this.props.name}</p>
+    </div>
+  }
+}
+
+function renderApp() {
+  let appProps = {
+    name: 'dqhan'
+  }
+  ReactDOM.render(
+    <App  {...appProps} />,
+    document.getElementById('app')
+  )
+}
+
+renderApp();
+
+//状态管理
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       name: props.name
     };
+    this.handleChangeName = this.handleChangeName.bind(this);
+  }
+
+  handleChangeName() {
+    this.setState({
+      name: '我变了'
+    })
   }
 
   render() {
     return (
       <React.Fragment>
-        <div> {`hello~${this.props.name}`} </div>
-        <div> {`hello~${this.state.name}`} </div>
+        <p> {`hello~${this.state.name}`} </p>
+        <button onClick={this.handleChangeName}></button>
       </React.Fragment>
     );
   }
+}
+
+/**
+ * 函数式
+ */
+//无状态函数式组件
+function App(props) {
+  return <p>{`hello! ${props.name}`}</p>
 }
 
 function renderApp() {
@@ -291,14 +320,129 @@ function renderApp() {
   ReactDOM.render(<App {...appProps} />, document.getElementById("app"));
 }
 
-//函数式组件没有状态管理，比较单纯的通过props传递属性，可以理解成是一个无状态组件
-//类组件，有状态控制，但是会出现地狱嵌套问题，层级过深
+//添加状态管理
+//函数式本来就是无状态的，如果非要添加状态管理，我们需要借助redux的帮助，集中管理状态
 
 /**
  * react hook
  */
-function App() {
-  let [name, setName] = setState('dqhan');
 
-  return <div>{`hello~${name}`}</div>;
+//react hook无状态组件其实跟函数式是一样的
+function App(props) {
+  return <div>
+    <p>{`hello~${props.name}`}</p>
+  </div>
 }
+
+//但是react hook可以管理自己的状态，有自己的函数钩子，这点相比要函数式显然效果更好，不需要借助redux，这就是我们为啥要在前面提到函数式编程涉及状态管理问题，就是要在这里跟react hook做个比较
+function App() {
+  let [name, setName] = useState('dqhan');
+  return <div>
+    <p>{`hello~${name}`}</p>
+    <button onClick={() => setName('我变了')}>Click</button>
+  </div>;
+}
+
+//但是现在的代码还是不够规范，不规范在哪里，我们讲函数直接绑定在onClick上，这样每一次render都会告诉react我重新绑定了一次函数，导致没必要的渲染逻辑
+//这种效率低下的代码同样在class模式里也常见，如下
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return <div>
+      <p>{`hello~${name}`}</p>
+      <button onClick={() => { console.log('click') }}>Click</button>
+    </div>
+  }
+}
+//那么如何改进
+//class模式解决方案
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    console.log('click~')
+  }
+
+  render() {
+    return <div>
+      <button onClick={this.handleClick}></button>
+    </div>
+  }
+}
+
+/**
+* hook解决方案
+*/
+
+function App() {
+  let [name, setName] = useState('dqhan');
+  let handleChangeName = useCallback(() => {
+    setName('我变了')
+  })
+  return <div>
+    <p>{`hello~${name}`}</p>
+    <button onClick={handleChangeName}>Click</button>
+  </div>;
+}
+
+//好了到这里我们大概了解hook的useState用法了。很简单，多了一个useState让函数式创建类有了自己的持久状态
+//那么在函数式里面我们如何做到class组件中的setState呢
+
+function App(props) {
+  let [name, setName] = useState('dqhan');
+  let handleChangeName = useCallback(() => {
+    setName(preState => {
+      let updatedValues = {
+        newValue: '我变了'
+      }
+      return { ...{ preState }, ...updatedValues }
+    })
+  })
+  function click1(params) {
+    setName('我变了1')
+  }
+  return <div>
+    <p>{`hello~${name}`}</p>
+    <button onClick={handleChangeName}>Click1</button>
+    <button onClick={click1}>Click2</button>
+  </div>;
+}
+
+//这中方式已经实现了状态整合，但是我们如果模拟一个state呢，来统一管理state呢
+function App(props) {
+  let [state, setState] = useState({
+    name: 'dqhan'
+  });
+  let handleChangeName = useCallback(() => {
+    setState(preState => {
+      let updatedValues = {
+        name: '我变了'
+      }
+      return { ...preState, ...updatedValues }
+    })
+  })
+  return <div>
+    <p>{`hello~${state.name}`}</p>
+    <button onClick={handleChangeName}>Click</button>
+  </div>;
+}
+
+//到目前为止，已经知道了react hook中如何使用state，那么周期函数呢，那么就涉及另一个钩子useEffect
+function App() {
+  var [count, setCount] = useState(0);
+  useEffect(() => {
+    console.log(`update--${count}`);
+  }, [count]);
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Click</button>
+    </div>
+  );
+}
+
