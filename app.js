@@ -1,5 +1,24 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef, useContext } from "react";
 import ReactDOM from 'react-dom';
+
+
+const AppContext = React.createContext('target');
+
+function App() {
+    useEffect(
+        () => { },
+        []
+    );
+    return <div>
+        <Target />
+    </div>;
+}
+
+function Target() {
+    const value = useContext(AppContext);
+    console.log(value);
+    return <div></div>;
+}
 
 
 function render(params) {
@@ -10,22 +29,3 @@ function render(params) {
 }
 
 render();
-
-
-function App(props) {
-    let [state, setState] = useState({
-        name: 'dqhan'
-    });
-    let handleChangeName = useCallback(() => {
-        setState(preState => {
-            let updatedValues = {
-                name: '我变了'
-            }
-            return { ...preState, ...updatedValues }
-        })
-    })
-    return <div>
-        <p>{`hello~${state.name}`}</p>
-        <button onClick={handleChangeName}>Click</button>
-    </div>;
-}
