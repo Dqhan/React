@@ -1,0 +1,1 @@
+他问了我，React的diff算法，错误边界，PropTypes是啥，数据流框架

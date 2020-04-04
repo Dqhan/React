@@ -1,0 +1,16 @@
+redux语法比较冗余
+
+
+提供了高阶组件，每个组件都可以直接访问store
+
+
+
+成:
+但是自己要造轮子啊
+
+成:
+context api加useReducer
+
+成:
+可以实现类似redux的东西
+useContext + useReducer可以实现类似的东西

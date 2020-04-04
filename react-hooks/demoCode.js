@@ -549,7 +549,6 @@ function App() {
 }
 
 var val;
-
 function useState(initVal) {
   let resultVal = val || initVal;
   function setVal(newVal) {
@@ -560,7 +559,6 @@ function useState(initVal) {
 }
 
 var watchArr = [];
-
 function useEffect(fn, watch) {
   var hasWatchChange = true;
   hasWatchChange = watchArr && watch.every((val, i) => val === watchArr[i])
@@ -632,7 +630,6 @@ class Target extends React.Component {
   }
 }
 
-
 function render(params) {
   ReactDOM.render(
     <App />,
@@ -661,7 +658,7 @@ function Target() {
 
 //在需要订阅多个 context 的时候，就更能体现出useContext的优势。传统的实现方式：
 
-function HeaderBar() {
+function App() {
   return <CurrentUser.Consumer>
     {
       user => <Notifications.Consumer>
@@ -677,7 +674,7 @@ function HeaderBar() {
 }
 
 //react hooks  
-function HeaderBar() {
+function App() {
   const user = useContext(CurrentUser);
   const notifications = useContext(Notifications);
 
@@ -872,7 +869,7 @@ const App = React.mome((target, target2) => {
 //这个就是获取dom层次依赖关系，跟类组件时一个道理
 
 //类组件实现方式
-class MyComponent extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.myRef = React.createRef();
