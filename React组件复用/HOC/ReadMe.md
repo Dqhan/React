@@ -1,0 +1,7 @@
+HOC解决了什么问题？
+HOC解决了逻辑复用问题
+HOC优点
+不会影响组件层级关系，降低了耦合性
+HODC缺点
+当高级组件的props中的值与wrappedcomponent的props属性一致会被覆盖，props可能会被覆盖。
+
