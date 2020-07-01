@@ -310,50 +310,91 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 //如果useEffect第一个函数参数直接或者间接用上某个变量，就请把这个变量放在useEffect的第二个参数里。
 
-function App() {
-    var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(0),
-        _useState2 = _slicedToArray(_useState, 2),
-        count = _useState2[0],
-        setCount = _useState2[1];
+// function App() {
+//     const [count, setCount] = useState(0)
 
-    Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
-        // 让resize事件触发handleResize
-        window.addEventListener('resize', debounce(handleResize));
-        return function () {
-            return window.removeEventListener('resize', debounce(handleResize));
-        };
+//     useEffect(() => {
+//         // 让resize事件触发handleResize
+//         window.addEventListener('resize', debounce(handleResize))
+//         return () => window.removeEventListener('resize', debounce(handleResize))
+//     }, [])
+
+//     const handleResize = () => {
+//         // 把count输出
+//         console.log(`count is ${count}`)
+//     }
+
+//     return (
+//         <div className="App">
+//             <button onClick={() => setCount(count + 1)}>+</button>
+//             <h1>{count}</h1>
+//         </div>
+//     );
+// }
+
+// function debounce(fn) {
+//     var timer;
+//     return function () {
+//         clearTimeout(timer);
+//         timer = setTimeout(fn.bind(this), 1000)
+//     }
+// }
+
+function App() {
+    var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(''),
+        _useState2 = _slicedToArray(_useState, 2),
+        text = _useState2[0],
+        setText = _useState2[1];
+
+    var _useState3 = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(''),
+        _useState4 = _slicedToArray(_useState3, 2),
+        text1 = _useState4[0],
+        setText1 = _useState4[1];
+
+    var handleChange = Object(react__WEBPACK_IMPORTED_MODULE_0__["useCallback"])(function (e) {
+        setText(e.target.value);
     }, []);
 
-    var handleResize = function handleResize() {
-        // 把count输出
-        console.log('count is ' + count);
+    var handleChange1 = function handleChange1(e) {
+        setText1(e.target.value);
     };
 
     return React.createElement(
         'div',
-        { className: 'App' },
+        null,
+        React.createElement('input', { type: 'text', value: text, onChange: handleChange }),
+        React.createElement(MemoChild, { text: text }),
+        React.createElement('input', { type: 'text', value: text1, onChange: handleChange1 })
+    );
+}
+
+function Child(props) {
+    var mount = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
+    Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
+        console.log('mount child');
+    }, []);
+    Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
+        if (!mount.current) mount.current = true;else {
+            console.log('child updated');
+        }
+    });
+    return React.createElement(
+        'div',
+        null,
         React.createElement(
-            'button',
-            { onClick: function onClick() {
-                    return setCount(count + 1);
-                } },
-            '+'
+            'p',
+            null,
+            props.text
         ),
         React.createElement(
-            'h1',
+            'p',
             null,
-            count
+            'Child'
         )
     );
 }
 
-function debounce(fn) {
-    var timer;
-    return function () {
-        clearTimeout(timer);
-        timer = setTimeout(fn.bind(this), 1000);
-    };
-}
+var MemoChild = React.memo(Child);
 
 /* harmony default export */ __webpack_exports__["default"] = (App);
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! react */ "./node_modules/react/index.js")))

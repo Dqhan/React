@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 // function Component1() {
 //     const [data, setData] = useState({ name: 'zhangsan', age: 60 });
@@ -165,34 +165,74 @@ import { useState, useEffect, useCallback } from "react";
 
 //如果useEffect第一个函数参数直接或者间接用上某个变量，就请把这个变量放在useEffect的第二个参数里。
 
-function App() {
-    const [count, setCount] = useState(0)
+// function App() {
+//     const [count, setCount] = useState(0)
 
-    useEffect(() => {
-        // 让resize事件触发handleResize
-        window.addEventListener('resize', debounce(handleResize))
-        return () => window.removeEventListener('resize', debounce(handleResize))
+//     useEffect(() => {
+//         // 让resize事件触发handleResize
+//         window.addEventListener('resize', debounce(handleResize))
+//         return () => window.removeEventListener('resize', debounce(handleResize))
+//     }, [])
+
+//     const handleResize = () => {
+//         // 把count输出
+//         console.log(`count is ${count}`)
+//     }
+
+//     return (
+//         <div className="App">
+//             <button onClick={() => setCount(count + 1)}>+</button>
+//             <h1>{count}</h1>
+//         </div>
+//     );
+// }
+
+// function debounce(fn) {
+//     var timer;
+//     return function () {
+//         clearTimeout(timer);
+//         timer = setTimeout(fn.bind(this), 1000)
+//     }
+// }
+
+function App() {
+    const [text, setText] = useState('');
+    const [text1, setText1] = useState('');
+    const handleChange = useCallback((e) => {
+        setText(e.target.value);
     }, [])
 
-    const handleResize = () => {
-        // 把count输出
-        console.log(`count is ${count}`)
+    const handleChange1 = (e) => {
+        setText1(e.target.value);
     }
 
-    return (
-        <div className="App">
-            <button onClick={() => setCount(count + 1)}>+</button>
-            <h1>{count}</h1>
-        </div>
-    );
+    return <div>
+        <p>{showNum()}</p>
+        <input type='text' value={text} onChange={handleChange} />
+        <MemoChild {...{ text }} />
+        <input type='text' value={text1} onChange={handleChange1} />
+    </div>
 }
 
-function debounce(fn) {
-    var timer;
-    return function () {
-        clearTimeout(timer);
-        timer = setTimeout(fn.bind(this), 1000)
-    }
+function Child(props) {
+    const mount = useRef(null);
+    useEffect(() => {
+        console.log('mount child');
+    }, [])
+    useEffect(() => {
+        if (!mount.current) mount.current = true;
+        else {
+            console.log('child updated');
+        }
+    })
+    return <div>
+        <p>{props.text}</p>
+        <p>Child</p>
+    </div>
 }
+
+const MemoChild = React.memo(Child)
+
+
 
 export default App;

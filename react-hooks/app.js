@@ -1,6 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef, useContext } from "react";
-import ReactDOM from 'react-dom';
-
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useContext,
+} from "react";
+import ReactDOM from "react-dom";
 
 // const AppContext = React.createContext('target');
 
@@ -99,36 +104,56 @@ import ReactDOM from 'react-dom';
 
 // useState(0)
 function Component2() {
-    let [count, setCount] = useState(0);
-    function handleSetCount() {
-        setCount(count + 1);
-        // setTimeout(function () {
-        //     console.log(count);
-        // }, 1000)
-        setTimeout(function () {
-            setCount('dqhna');
-        }, 1000)
+  let [count, setCount] = useState(0);
+  function handleSetCount() {
+    setCount(count + 1);
+    // setTimeout(function () {
+    //     console.log(count);
+    // }, 1000)
+    setTimeout(function () {
+      setCount("dqhna");
+    }, 1000);
 
-        setTimeout(function () {
-            console.log(count);
-        }, 2000)
-    }
+    setTimeout(function () {
+      console.log(count);
+    }, 2000);
+  }
 
-    useEffect(() => {
+  useEffect(() => {});
 
-    })
-
-    return <div>
-        <p>{`${count}`}</p>
-        <button onClick={handleSetCount}>Click</button>
+  return (
+    <div>
+      <p>{`${count}`}</p>
+      <button onClick={handleSetCount}>Click</button>
     </div>
+  );
 }
 
-function render(params) {
-    ReactDOM.render(
-        <Component2 />,
-        document.getElementById('app')
-    )
-}
+// class Component1 extends React.Component {
+//   constructor(props) {
+//     super(props);
+//   }
 
-render();
+//   hello() {
+//     console.log("s");
+//   }
+// }
+
+// class Component2 extends Component1 {
+//   constructor(props) {
+//     super(props);
+//   }
+
+//   hello_2() {
+//     super.hello();
+//   }
+
+//   render() {
+//     this.hello_2();
+//     return <div></div>;
+//   }
+// }
+
+{
+  ReactDOM.render(<Component2 />, document.getElementById("app"));
+}
